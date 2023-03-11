@@ -1,6 +1,6 @@
 # Social Media API - NodeJS🔥 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![Twitter Follow](https://img.shields.io/twitter/follow/iamgrandbusta?style=social)](https://twitter.com/iamgrandbusta)
 
-A Social media Api built with NodeJS and Express framework. Improving day by day.
+A Social media (DREAM-APP) Api built with NodeJS and Express framework. Improving day by day.
 
 [Here](https://ohsocial.herokuapp.com/) is the link to the API base URL
 
@@ -42,8 +42,6 @@ Always attach the token on the request header
 
 ## 🤓 Author(s)
 
-**Olaifa Boluwatife Jonathan** [![Twitter Follow](https://img.shields.io/twitter/follow/iamgrandbusta?style=social)](https://twitter.com/iamgrandbusta)
-
+**M Ahmad Iqbal**
 ## 🔖 LICENCE
 
-[WTFPL](http://www.wtfpl.net/about/)

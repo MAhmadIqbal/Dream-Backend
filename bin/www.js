@@ -5,7 +5,7 @@
  */
 require('dotenv').config()
 var app = require('../app');
-var debug = require('debug')('social-media:server');
+var debug = require('debug')('dream-media:server');
 var http = require('http');
 
 /**
