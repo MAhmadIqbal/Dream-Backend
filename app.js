@@ -13,10 +13,11 @@ const likes = require('./src/routes/likes')
 const friends = require('./src/routes/friends')
 
 const app = express()
+// require('./src/config/testdb')
 
 app.use(headers)
 testDbConnection()
-app.use(logger('dev'))
+app.use(logger('tiny'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static('./src/uploads'))

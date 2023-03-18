@@ -6,7 +6,7 @@ const { JWT_KEY } = process.env
 
 const signUp = async (req, res, next) => {
   try {
-    const { email, firstname, lastname, password } = req.body
+    const { email, firstname, lastname, password,role } = req.body
     if (email && firstname && lastname && password) {
       if (validator.validate(email)) {
         let check = await User.findOne({
@@ -21,8 +21,10 @@ const signUp = async (req, res, next) => {
             first_name: firstname,
             last_name: lastname,
             password: await bcrypt.hash(password, 10),
+            role:role
           })
-          if (createUser) {
+          console.log("User",createUser);
+          if(createUser){
             res.status(201).json({ response: 'user created successfully' })
           }
         }
@@ -33,6 +35,7 @@ const signUp = async (req, res, next) => {
       res.status(401).json({ response: 'one or more values is missing' })
     }
   } catch (error) {
+    console.log(error);
     res.status(500).json({ response: 'an error occured' })
   }
 }

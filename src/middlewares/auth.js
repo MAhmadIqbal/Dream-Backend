@@ -37,9 +37,9 @@ exports.adminAuth = async (req, res, next) => {
       const decoded = jwt.verify(token, JWT_KEY)
       const userData = await User.findOne({
         where: { email: decoded.email },
-        attributes: ['email', 'user_type'],
+        attributes: ['email', 'role'],
       })
-      if (userData.user_type === 'admin') {
+      if (userData.role === 'admin') {
         req.userData = userData
         next()
       } else {

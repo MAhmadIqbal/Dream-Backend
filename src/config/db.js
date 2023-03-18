@@ -9,6 +9,8 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
 testDbConnection = async () => {
   try {
     await sequelize.authenticate()
+    sequelize.sync()
+    console.log('Connection has been established successfully.');
     // sequelize.sync({ force: true })
   } catch (error) {
     console.error(error)
