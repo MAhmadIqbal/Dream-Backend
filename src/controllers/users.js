@@ -1,100 +1,105 @@
-const { User } = require('../models')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const validator = require('email-validator')
-const { JWT_KEY } = process.env
+const { User } = require("../models");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const validator = require("email-validator");
+const { JWT_KEY } = process.env;
 
 const signUp = async (req, res, next) => {
   try {
-    const { email, firstname, lastname, password,role } = req.body
+    const { email, firstname, lastname, password, role, active } = req.body;
     if (email && firstname && lastname && password) {
       if (validator.validate(email)) {
         let check = await User.findOne({
           where: { email: email },
-          attributes: ['email'],
-        })
+          attributes: ["email"],
+        });
+        console.log("check", check);
         if (check !== null) {
-          res.status(409).json({ response: 'user already exist' })
+          res.status(409).json({ response: "user already exist" });
         } else {
           let createUser = await User.create({
             email: email,
             first_name: firstname,
             last_name: lastname,
             password: await bcrypt.hash(password, 10),
-            role:role
-          })
-          console.log("User",createUser);
-          if(createUser){
-            res.status(201).json({ response: 'user created successfully' })
+            role: role,
+            active: active,
+          });
+          console.log("User", createUser);
+          if (createUser) {
+            res.status(201).json({ response: "user created successfully" });
           }
         }
       } else {
-        res.status(401).json({ response: 'email is not valid' })
+        res.status(401).json({ response: "email is not valid" });
       }
     } else {
-      res.status(401).json({ response: 'one or more values is missing' })
+      res.status(401).json({ response: "one or more values is missing" });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ response: 'an error occured' })
+    res.status(500).json({ response: "an error occured" });
   }
-}
+};
 
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body
+    const { email, password } = req.body;
     if (email && password) {
       if (validator.validate(email)) {
         let check = await User.findOne({
           where: { email: email },
-          attributes: ['email', 'password'],
-        })
+          attributes: ["email", "password"],
+        });
         if (check !== null) {
-          let comparePassword = await bcrypt.compare(password, check.password)
+          let comparePassword = await bcrypt.compare(password, check.password);
           if (comparePassword) {
             res.status(200).json({
-              response: 'Auth successful',
+              response: "Auth successful",
               token: jwt.sign({ email: check.email }, JWT_KEY),
-            })
+            });
           } else {
-            res.status(401).json({ response: 'Auth failed' })
+            res.status(401).json({ response: "Auth failed" });
           }
         } else {
-          res.status(404).json({ response: 'user not found' })
+          res.status(404).json({ response: "user not found" });
         }
       } else {
-        res.status(422).json({ response: 'not a valid email' })
+        res.status(422).json({ response: "not a valid email" });
       }
     } else {
-      res.status(422).json({ response: 'one or more values are missing' })
+      res.status(422).json({ response: "one or more values are missing" });
     }
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ response: 'An error occured' })
+    console.error(error);
+    res.status(500).json({ response: "An error occured" });
   }
-}
+};
 
 const remove = async (req, res, next) => {
   try {
-    await User.destroy({ where: { id: req.userData.id } })
-    res.status(200).json({ response: 'user deleted sucessfully' })
+    await User.destroy({ where: { id: req.userData.id } });
+    res.status(200).json({ response: "user deleted sucessfully" });
   } catch (error) {
-    res.status(500).json({ message: 'An error occured' })
+    res.status(500).json({ message: "An error occured" });
   }
-}
+};
 
 const update = async (req, res, next) => {
   try {
-    await User.update({ ...req.body }, { where: { id: req.userData.id } })
-    res.status(200).json({ message: 'update successful' })
+    const updatedUser = await User.update(
+      { ...req.body },
+      { where: { id: req.userData.id } }
+    );
+    res.status(200).json({ message: "update successful" });
   } catch (error) {
-    res.status(500).json({ message: 'An error occured' })
+    res.status(500).json({ message: "An error occured" });
   }
-}
+};
 
 module.exports = {
   signUp,
   login,
   remove,
   update,
-}
+};
