@@ -1,7 +1,8 @@
-const { sq } = require('../config/db')
-const { DataTypes } = require('sequelize')
+const { sq } = require("../config/db");
+const { DataTypes } = require("sequelize");
+const User = require("./user");
 
-const Post = sq.define('post', {
+const Post = sq.define("post", {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -10,6 +11,6 @@ const Post = sq.define('post', {
   },
   img_url: { type: DataTypes.STRING, allowNull: false },
   caption: { type: DataTypes.STRING, allowNull: true },
-})
+});
 
-module.exports = Post
+module.exports = Post;
