@@ -1,20 +1,30 @@
 const User = require("./user");
 const UserFriend = require("./userFriend");
-const Post = require("./post");
-const Like = require("./like");
-const Comment = require("./comment");
+const Video = require("./video");
+const Like = require("./video_like");
+const Comment = require("./video_comment");
 
-User.hasMany(Post);
-Post.belongsTo(User);
+// Video
+User.hasMany(Video, { foreignKey: "user_id" });
+Video.belongsTo(User, { foreignKey: "user_id" });
 
-User.hasMany(Comment);
+//user  Comments
+User.hasMany(Comment, { foreignKey: "user_id" });
+Comment.belongsTo(User);
 
-User.hasMany(Like);
+// User Likes
+User.hasMany(Like, { foreignKey: "user_id" });
+Like.belongsTo(User, { foreignKey: "user_id" });
 
+// Freinds
 User.belongsToMany(User, { through: UserFriend, as: "friend" });
 
-Post.hasMany(Like);
+// Video Likes
+Video.hasMany(Like, { foreignKey: "video_id" });
+Like.belongsTo(Video, { foreignKey: "video_id" });
 
-Post.hasMany(Comment);
+// Video Comments
+Video.hasMany(Comment, { foreignKey: "video_id" });
+Comment.belongsTo(Video);
 
-module.exports = { User, Post, Like, Comment, UserFriend };
+module.exports = { User, Video, Like, Comment, UserFriend };

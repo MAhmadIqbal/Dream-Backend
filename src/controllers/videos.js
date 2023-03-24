@@ -1,22 +1,44 @@
-const { User, Post, Comment } = require("../models");
+const { User, Video, Comment } = require("../models");
 const cloudinary = require("../config/cloudinary");
 const fs = require("fs");
 
-const createNewPost = async (req, res, next) => {
+const createNewVideo = async (req, res, next) => {
   try {
     const { path } = req.file;
     console.log("path", path);
     if (path) {
-      const { caption } = req.body;
-      console.log("caption", req.body);
+      const {
+        description,
+        view,
+        section,
+        privacy_type,
+        sound_id,
+        allow_comments,
+        allow_duet,
+        block,
+        duet_video_id,
+        duration,
+        promote,
+      } = req.body;
+
       const { url } = await cloudinary.uploads(path, "SocialMedia");
       fs.unlinkSync(path);
-      const newPost = await Post.create({
-        img_url: url,
-        caption: caption,
-        userId: req.userData.id,
+      const newVideo = await Video.create({
+        video: url,
+        view,
+        description,
+        section,
+        privacy_type,
+        sound_id,
+        allow_comments,
+        allow_duet,
+        block,
+        duet_video_id,
+        duration,
+        promote,
+        user_id: req.userData.id,
       });
-      res.status(200).json({ post: newPost });
+      res.status(200).json({ video: newVideo });
     } else {
       res.status(422).json({ response: "image not present in body" });
     }
@@ -26,7 +48,7 @@ const createNewPost = async (req, res, next) => {
   }
 };
 
-const deletePost = async (req, res, next) => {
+const deleteVideo = async (req, res, next) => {
   try {
     const post = await Post.destroy({
       where: { id: req.params.postId, userId: req.userData.id },
@@ -48,23 +70,23 @@ const deletePost = async (req, res, next) => {
   }
 };
 
-const updatePost = (req, res, next) => {};
+const updateVideo = (req, res, next) => {};
 
-const getSinglePost = async (req, res, next) => {
+const getSingleVideo = async (req, res, next) => {
   try {
-    const post = await Post.findOne({
-      where: { id: req.params.postId },
+    const video = await Video.findOne({
+      where: { id: req.params.videoId },
       include: [
         {
           model: Comment,
-          attributes: ["id", "text", "createdAt", "updatedAt"],
+          attributes: ["id", "comment", "created"],
         },
       ],
     });
-    if (post) {
+    if (video) {
       res.status(200).json({
         response: "success",
-        post: post,
+        video: video,
       });
     } else {
       res.status(404).json({
@@ -80,8 +102,8 @@ const getSinglePost = async (req, res, next) => {
 };
 
 module.exports = {
-  createNewPost,
-  deletePost,
-  updatePost,
-  getSinglePost,
+  createNewVideo,
+  deleteVideo,
+  updateVideo,
+  getSingleVideo,
 };
