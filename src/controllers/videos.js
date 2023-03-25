@@ -1,47 +1,18 @@
 const { User, Video, Comment } = require("../models");
 const cloudinary = require("../config/cloudinary");
+const { createnewVideoValidation } = require("../validations/video.validation");
 const fs = require("fs");
 
 const createNewVideo = async (req, res, next) => {
   try {
-    const { path } = req.file;
-    console.log("path", path);
-    if (path) {
-      const {
-        description,
-        view,
-        section,
-        privacy_type,
-        sound_id,
-        allow_comments,
-        allow_duet,
-        block,
-        duet_video_id,
-        duration,
-        promote,
-      } = req.body;
+    const { error } = createnewVideoValidation(req.body);
+    if (error) return res.status(400).json({ error: error.details[0].message });
 
-      const { url } = await cloudinary.uploads(path, "SocialMedia");
-      fs.unlinkSync(path);
-      const newVideo = await Video.create({
-        video: url,
-        view,
-        description,
-        section,
-        privacy_type,
-        sound_id,
-        allow_comments,
-        allow_duet,
-        block,
-        duet_video_id,
-        duration,
-        promote,
-        user_id: req.userData.id,
-      });
-      res.status(200).json({ video: newVideo });
-    } else {
-      res.status(422).json({ response: "image not present in body" });
-    }
+    const newVideo = await Video.create({
+      ...req.body,
+      user_id: req.userData.id,
+    });
+    res.status(200).json({ video: newVideo });
   } catch (error) {
     console.error(error);
     res.status(500).json({ response: "error occured" });
@@ -50,10 +21,10 @@ const createNewVideo = async (req, res, next) => {
 
 const deleteVideo = async (req, res, next) => {
   try {
-    const post = await Post.destroy({
-      where: { id: req.params.postId, userId: req.userData.id },
+    const video = await Video.destroy({
+      where: { id: req.params.videoId, user_id: req.userData.id },
     });
-    if (post) {
+    if (video) {
       res.status(200).json({
         response: "success",
       });

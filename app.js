@@ -11,6 +11,7 @@ const videos = require("./src/routes/videos");
 const comments = require("./src/routes/comments");
 const likes = require("./src/routes/likes");
 const friends = require("./src/routes/friends");
+const media = require("./src/routes/media");
 const app = express();
 // require('./src/config/testdb')
 
@@ -27,6 +28,7 @@ app.use("/videos", videos);
 app.use("/comments", comments);
 app.use("/likes", likes);
 app.use("/friends", friends);
+app.use("/get_media_url", media);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

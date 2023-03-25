@@ -9,7 +9,7 @@ const {
   getSingleVideo,
 } = require("../controllers/videos");
 
-router.post("/", userAuth, upload.single("postVideo"), createNewVideo);
+router.post("/", userAuth, createNewVideo);
 router.patch("/:videoId", userAuth, updateVideo);
 router.delete("/:videoId", userAuth, deleteVideo);
 router.get("/:videoId", getSingleVideo);
