@@ -8,7 +8,7 @@ const {
   update,
   profie,
 } = require("../controllers/users");
-const { getAllPosts, getFeeds } = require("../controllers/user_post");
+const { getAllVideos, getFeeds } = require("../controllers/user_post");
 const { getAllUserFriends } = require("../controllers/friends");
 
 router.post("/signup", signUp);
@@ -18,7 +18,7 @@ router.patch("/update", userAuth, update);
 router.get("/profile", userAuth, profie);
 
 //User posts routes
-router.get("/:userId/posts", getAllPosts);
+router.get("/:user_id/videos", getAllVideos);
 router.get("/:userId/friends", getAllUserFriends);
 router.get("/:userId/feeds", getFeeds);
 

@@ -6,7 +6,14 @@ const fs = require("fs");
 const createNewVideo = async (req, res, next) => {
   try {
     const { error } = createnewVideoValidation(req.body);
-    if (error) return res.status(400).json({ error: error.details[0].message });
+    if (error) {
+      const errors = {};
+      error.details.forEach((element) => {
+        errors[element.context.key] = element.message.replace(/\"/g, "");
+      });
+
+      return res.status(400).json({ errors });
+    }
 
     const newVideo = await Video.create({
       ...req.body,

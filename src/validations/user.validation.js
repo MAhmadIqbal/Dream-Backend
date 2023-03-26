@@ -39,7 +39,16 @@ const createUserValidation = (reqObj) => {
     reset_wallet_datetime: joi.date(),
   });
 
-  return schema.validate(reqObj);
+  return schema.validate(reqObj, { abortEarly: false });
 };
 
-module.exports = { createUserValidation };
+const loginUserValidation = (reqObj) => {
+  const schema = joi.object({
+    email: joi.string().email().required(),
+    password: joi.string().required(),
+  });
+
+  return schema.validate(reqObj, { abortEarly: false });
+};
+
+module.exports = { createUserValidation, loginUserValidation };

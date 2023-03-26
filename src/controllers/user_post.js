@@ -1,63 +1,63 @@
-const { User, Post, Comment, Like } = require('../models')
+const { User, Video, Comment, Like } = require("../models");
 
-const getAllPosts = async (req, res, next) => {
+const getAllVideos = async (req, res, next) => {
   try {
-    const userPost = await User.findOne({
-      where: { id: req.params.userId },
-      attributes: ['id'],
-      include: [{ model: Post, attributes: { exclude: ['userId'] } }],
-    })
-    if (userPost) {
+    const userVideo = await User.findOne({
+      where: { id: req.params.user_id },
+      attributes: ["id"],
+      include: [{ model: Video, attributes: { exclude: ["userId"] } }],
+    });
+    if (userVideo) {
       res.status(200).json({
-        userId: userPost.id,
-        posts: userPost.posts,
-      })
+        user_id: userVideo.id,
+        videos: userVideo.videos,
+      });
     } else {
       res.status(404).json({
-        response: 'User does not exist',
-      })
+        response: "User does not exist",
+      });
     }
   } catch (error) {
-    console.error(error)
+    console.error(error);
     res.status(500).json({
-      response: 'an error occured',
-    })
+      response: "an error occured",
+    });
   }
-}
+};
 
 const getFeeds = async (req, res, next) => {
-  const userId = req.params.userId
+  const userId = req.params.userId;
   try {
     const allFriends = await User.findOne({
       where: { id: userId },
-      attributes: ['id', 'first_name', 'last_name'],
+      attributes: ["id", "first_name", "last_name"],
       include: [
         {
           model: User,
-          attributes: ['id', 'first_name', 'last_name'],
-          as: 'friend',
+          attributes: ["id", "first_name", "last_name"],
+          as: "friend",
           include: [
             {
               model: Post,
               include: [
-                { model: Comment, attributes: { exclude: ['postId'] } },
+                { model: Comment, attributes: { exclude: ["postId"] } },
                 {
                   model: Like,
-                  attributes: { exclude: ['postId'] },
+                  attributes: { exclude: ["postId"] },
                 },
               ],
-              attributes: { exclude: ['userId'] },
+              attributes: { exclude: ["userId"] },
             },
           ],
           through: { attributes: [] },
         },
       ],
-    })
-    let postArr = []
-    const allFriend = JSON.parse(JSON.stringify(allFriends))
+    });
+    let postArr = [];
+    const allFriend = JSON.parse(JSON.stringify(allFriends));
     if (allFriend) {
-      allFriend.friend.forEach(friend => {
-        friend.posts.forEach(post => {
+      allFriend.friend.forEach((friend) => {
+        friend.posts.forEach((post) => {
           postArr.push({
             user: {
               first_name: friend.first_name,
@@ -65,24 +65,24 @@ const getFeeds = async (req, res, next) => {
               id: friend.id,
             },
             ...post,
-          })
-        })
-      })
+          });
+        });
+      });
       const sortedArr = postArr.sort(
         (a, b) =>
-          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-      )
-      res.status(200).json({ feed: sortedArr })
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      );
+      res.status(200).json({ feed: sortedArr });
     } else {
-      res.status(404).json({ response: 'no friend added yet' })
+      res.status(404).json({ response: "no friend added yet" });
     }
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ response: 'error occured' })
+    console.error(error);
+    res.status(500).json({ response: "error occured" });
   }
-}
+};
 
 module.exports = {
-  getAllPosts,
+  getAllVideos,
   getFeeds,
-}
+};

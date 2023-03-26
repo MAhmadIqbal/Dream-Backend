@@ -19,7 +19,7 @@ const createnewVideoValidation = (reqObj) => {
     promote: joi.number().min(0),
   });
 
-  return schema.validate(reqObj);
+  return schema.validate(reqObj, { abortEarly: false });
 };
 
 module.exports = { createnewVideoValidation };

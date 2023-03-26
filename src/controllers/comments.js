@@ -2,32 +2,36 @@
 const Video = require("../models/video");
 const User = require("../models/user");
 const Comment = require("../models/video_comment");
+const {
+  createCommentValidation,
+} = require("../validations/comment.validation");
 
 const createComment = async (req, res, next) => {
-  const { video_id, comment } = req.body;
   try {
-    const findVideo = await Video.findOne({ where: { id: video_id } });
-    if (findVideo) {
-      if (comment) {
-        const commentCreated = await Comment.create({
-          comment,
-          video_id,
-          user_id: req.userData.id,
-        });
-        res.status(200).json({
-          response: "success",
-          comment: commentCreated,
-        });
-      } else {
-        res.status(422).json({
-          response: "text not present",
-        });
-      }
-    } else {
-      res.status(404).json({
-        response: "Not found",
+    const { error } = createCommentValidation(req.body);
+    if (error) {
+      const errors = {};
+      error.details.forEach((element) => {
+        errors[element.context.key] = element.message.replace(/\"/g, "");
       });
+      return res.status(400).json({ errors });
     }
+
+    const findVideo = await Video.findOne({ where: { id: req.body.video_id } });
+
+    if (!findVideo)
+      return res.status(404).json({ response: "Video not found" });
+
+    const commentCreated = await Comment.create({
+      comment: req.body.comment,
+      video_id: req.body.video_id,
+      user_id: req.userData.id,
+    });
+
+    res.status(200).json({
+      response: "success",
+      comment: commentCreated,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
